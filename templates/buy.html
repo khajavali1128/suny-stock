@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Buy Stock
+{% endblock %}
+
+{% block main %}
+<form action="/buy" method="post">
+    <div class="mb-3 text-center">
+        <h5>{{greeting}}Available Cash: {{ usd(cash) }}</h5>
+    </div>
+
+    <!-- Input for Stock Symbol -->
+    <div class="mb-3">
+        <label for="symbol" class="form-label">Stock Symbol</label>
+        <input
+            id="symbol"
+            autocomplete="off"
+            autofocus
+            class="form-control mx-auto w-auto {% if symbol_error %}is-invalid{% endif %}"
+            name="symbol"
+            placeholder="ex: NFLX"
+            type="text">
+        {% if symbol_error %}
+            <div class="invalid-feedback">
+                {{ symbol_error }}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Input for Number of Shares -->
+    <div class="mb-3">
+        <label for="shares" class="form-label">Number of Shares</label>
+        <input
+            id="shares"
+            class="form-control mx-auto w-auto {% if shares_error %}is-invalid{% endif %}"
+            name="shares"
+            placeholder="ex: 100"
+            type="number"
+            min="1"
+            step="1">
+        {% if shares_error %}
+            <div class="invalid-feedback">
+                {{ shares_error }}
+            </div>
+        {% endif %}
+    </div>
+
+   <!-- Submit Button -->
+    <div class="text-center">
+        <button class="btn btn-success w-auto" type="submit">Buy</button>
+    </div>
+
+    <!-- Display cash error as a general alert -->
+    {% if cash_error %}
+        <div class="alert alert-danger mt-3 text-center">
+            {{ cash_error }}
+        </div>
+    {% endif %}
+</form>
+{% endblock %}

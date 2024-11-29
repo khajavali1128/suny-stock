@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Welcome page
+{% endblock %}
+
+{% block main %}
+<h2>Welcome, {{ username }}!</h2>
+<h4>Cash: {{ usd(cash) }}</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Company</th>
+            <th>Shares</th>
+            <th>Current Price</th>
+            <th>Total Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for stock in portfolio %}
+        <tr>
+            <td>{{ stock.symbol }}</td>
+            <td>{{ stock.company_name }}</td>
+            <td>{{ stock.shares }}</td>
+            <td>{{ usd(cur_stock_price[stock.symbol]) }}</td>
+            <td>{{ usd(stock.shares * cur_stock_price[stock.symbol]) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if message %}
+    <h5>{{ message }}</h5>
+{% endif %}
+
+{% endblock %}

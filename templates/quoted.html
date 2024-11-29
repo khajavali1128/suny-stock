@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Quoted
+{% endblock %}
+
+{% block main %}
+    <h2>Current Company Details</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>Company</td>
+                <td>Price</td>
+                <td>Symbol</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{quoteinfo['name']}}</td>
+                <td>{{usd(quoteinfo.price)}}</td>
+                <td>{{quoteinfo.symbol}}</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

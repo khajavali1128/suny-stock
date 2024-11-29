@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Transaction History
+{% endblock %}
+
+{% block main %}
+<h2>Transaction History</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Timestamp</th>
+            <th>Symbol</th>
+            <th>Shares</th>
+            <th>Price</th>
+            <th>Total Price</th>
+            <th>Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for transaction in transactions %}
+        <tr>
+            <td>{{ transaction.local_timestamp }}</td>
+            <td>{{ transaction.symbol }}</td>
+            <td>{{ transaction.shares }}</td>
+            <td>{{ usd(transaction.price) }}</td>
+            <td>{{ usd(transaction.total_price) }}</td>
+            <td>{{ transaction.type }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if not transactions %}
+    <p>No transactions to display.</p>
+{% endif %}
+{% endblock %}

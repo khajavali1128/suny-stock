@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Quote
+{% endblock %}
+
+{% block main %}
+    <form action="/quote" method="post">
+        <div class="mb-3">
+            <label for="symbol" class="form-label">Stock Symbol</label>
+            <input autocomplete="off"
+                autofocus
+                class="form-control mx-auto w-auto {% if error %}is-invalid{% endif %}"
+                name="symbol"
+                placeholder="EX: NFLX"
+                type="text">
+        {% if error %}
+                <div class="invalid-feedback">
+                   {{ error }}
+                </div>
+        {% endif %}
+        </div>
+        <button class="btn btn-primary" type="submit">Quote</button>
+    </form>
+{% endblock %}
