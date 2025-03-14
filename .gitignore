@@ -4,3 +4,4 @@ flask_session/
 .git/
 __pycache__/
 .DS_Store
+.vercel
