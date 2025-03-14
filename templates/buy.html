@@ -7,7 +7,7 @@
 {% block main %}
 <form action="/buy" method="post">
     <div class="mb-3 text-center">
-        <h5>{{greeting}}Available Cash: {{ usd(cash) }}</h5>
+        <h5>{{greeting}}Available Cash: {{ value|usd }}</h5>
     </div>
 
     <!-- Input for Stock Symbol -->

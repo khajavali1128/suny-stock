@@ -45,8 +45,14 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
 Session(app)
 db = SQLAlchemy(app)
 
-# Custom filter
-app.jinja_env.filters["usd"] = usd
+# Register the USD filter with Jinja2
+def usd_filter(value):
+    """Format value as USD."""
+    if value is None:
+        return "N/A"
+    return f"${value:,.2f}"
+
+app.jinja_env.filters["usd"] = usd_filter
 
 # Models
 class User(db.Model):
