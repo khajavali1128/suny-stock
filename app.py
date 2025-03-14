@@ -10,50 +10,32 @@ from helpers import apology, login_required, lookup, usd
 from sqlalchemy.exc import SQLAlchemyError
 import logging
 
-# Initialize SQLAlchemy with null app
-db = SQLAlchemy()
-
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def create_app():
-    app = Flask(__name__)
-    
-    try:
-        # Load environment variables
-        load_dotenv()
-        
-        # Configure application
-        app.config["SESSION_PERMANENT"] = False
-        app.config["SESSION_TYPE"] = "filesystem"
-        
-        # Configure PostgreSQL database
-        app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-        
-        # Initialize extensions
-        Session(app)
-        db.init_app(app)
-        
-        # Custom filter
-        app.jinja_env.filters["usd"] = usd
-        
-        with app.app_context():
-            try:
-                db.create_all()
-                logger.info("Database tables created successfully")
-            except Exception as e:
-                logger.error(f"Database initialization error: {e}")
-                
-    except Exception as e:
-        logger.error(f"Application initialization error: {e}")
-    
-    return app
+# Load environment variables
+load_dotenv()
 
-app = create_app()
+# Initialize Flask app
+app = Flask(__name__)
 
-# Create models
+# Configure application
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+
+# Configure PostgreSQL database
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize extensions
+Session(app)
+db = SQLAlchemy(app)
+
+# Custom filter
+app.jinja_env.filters["usd"] = usd
+
+# Models
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -79,6 +61,14 @@ class Transaction(db.Model):
     total_price = db.Column(db.Float, nullable=False)
     type = db.Column(db.String(4), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+# Create tables
+with app.app_context():
+    try:
+        db.create_all()
+        logger.info("Database tables created successfully")
+    except Exception as e:
+        logger.error(f"Database initialization error: {e}")
 
 @app.after_request
 def after_request(response):
