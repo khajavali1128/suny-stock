@@ -8,24 +8,39 @@ from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import apology, login_required, lookup, usd
 
-# Load environment variables
-load_dotenv()
+# Initialize SQLAlchemy with null app
+db = SQLAlchemy()
 
-# Configure application
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
+    
+    # Load environment variables
+    load_dotenv()
+    
+    # Configure application
+    app.config["SESSION_PERMANENT"] = False
+    app.config["SESSION_TYPE"] = "filesystem"
+    
+    # Configure PostgreSQL database
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    
+    # Initialize extensions
+    Session(app)
+    db.init_app(app)
+    
+    # Custom filter
+    app.jinja_env.filters["usd"] = usd
+    
+    with app.app_context():
+        try:
+            db.create_all()
+        except Exception as e:
+            print(f"Database initialization error: {e}")
+    
+    return app
 
-# Custom filter
-app.jinja_env.filters["usd"] = usd
-
-# Configure session
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
-
-# Configure PostgreSQL database
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+app = create_app()
 
 # Create models
 class User(db.Model):
@@ -53,10 +68,6 @@ class Transaction(db.Model):
     total_price = db.Column(db.Float, nullable=False)
     type = db.Column(db.String(4), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-
-# Create tables
-with app.app_context():
-    db.create_all()
 
 @app.after_request
 def after_request(response):
